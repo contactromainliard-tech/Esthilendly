@@ -6,7 +6,7 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'  # Nom de la vue de connexion
+login_manager.login_view = 'auth.login'
 
 def create_app(config_name='default'):
     """Crée et configure l'application Flask."""
@@ -18,19 +18,14 @@ def create_app(config_name='default'):
     
     # Initialiser les extensions avec l'application
     db.init_app(app)
-    
-    # Importer et enregistrer les blueprints
-    #from .routes import main as main_blueprint
-    #app.register_blueprint(main_blueprint)
-
-    # Configurer Flask-Migrate
     migrate.init_app(app, db)
-
-    # Configurer Flask-Login
     login_manager.init_app(app)
 
+    # Importer et enregistrer les blueprints
+    from .routes.clients import clients_bp
+    app.register_blueprint(clients_bp)
+
     with app.app_context():
-        # Importer les modèles pour que Flask-Migrate puisse les détecter
-        from .models import rdv, client  # Assurez-vous que ces modules existent
+        from .models import rdv, client
 
     return app
