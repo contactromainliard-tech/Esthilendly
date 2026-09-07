@@ -1,17 +1,15 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from app.models.client import Client
-from flask_sqlalchemy import SQLAlchemy
 from app import db
+
+
 
 clients_bp = Blueprint('clients', __name__, url_prefix='/clients')
 
 @clients_bp.route('/')
 def index():
         clients = Client.query.all()
-        return jsonify([{
-            'id': client.id,
-            'name': client.name
-        } for client in clients])
+        return render_template('clients/index.html', clients=clients)
 
 @clients_bp.route('/new', methods=['POST'])
 def create_client():
@@ -38,11 +36,4 @@ def create_client():
 @clients_bp.route('/<int:client_id>')
 def get_client(client_id):
     client = Client.query.get_or_404(client_id)
-    return jsonify({
-        'id': client.id,
-        'name': client.name,
-        'surname': client.surname,
-        'email': client.email,
-        'phone': client.phone
-    })
-       
+    return render_template('clients/detail.html', client=client) 
