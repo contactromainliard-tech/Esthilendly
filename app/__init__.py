@@ -29,5 +29,8 @@ def create_app(config_name='default'):
     # Configurer Flask-Login
     login_manager.init_app(app)
 
+    with app.app_context():
+        # Importer les modèles pour que Flask-Migrate puisse les détecter
+        from .models import rdv, client  # Assurez-vous que ces modules existent
 
     return app
