@@ -1,0 +1,15 @@
+# Environnement
+.env
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Flask
+instance/
+
+# OS
+.DS_Store
+Thumbs.db
