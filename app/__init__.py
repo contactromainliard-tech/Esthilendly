@@ -24,6 +24,8 @@ def create_app(config_name='default'):
     # Importer et enregistrer les blueprints
     from .routes.clients import clients_bp
     app.register_blueprint(clients_bp)
+    from .routes.rdv import rdv_bp
+    app.register_blueprint(rdv_bp)
 
     with app.app_context():
         from .models import rdv, client
