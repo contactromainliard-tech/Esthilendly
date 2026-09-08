@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for
 from app.models.client import Client
 from app import db
-
+import re
 
 
 clients_bp = Blueprint('clients', __name__, url_prefix='/clients')
@@ -11,25 +11,34 @@ def index():
         clients = Client.query.all()
         return render_template('clients/index.html', clients=clients)
 
-@clients_bp.route('/new', methods=['POST'])
+@clients_bp.route('/new', methods=['GET', 'POST'])
 def create_client():
-    data = request.get_json()
-    
-    # 1. Vérifier d'abord
-    if not data or not data.get('name') or not data.get('email'):
-        return jsonify({'error': 'Le nom et l\'email sont requis'}), 400
-    
-    # 2. Créer ensuite
-    new_client = Client(
-        name=data.get('name'),
-        surname=data.get('surname'),
-        email=data.get('email'),
-        phone=data.get('phone')
-    )
-    db.session.add(new_client)
-    db.session.commit()
-    
-    return jsonify({'message': 'Client créé avec succès'}), 201
+
+    # Gestion de la requête POST pour créer un nouveau client
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        surname = request.form.get('surname', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        phone = request.form.get('phone', '').strip() or None
+
+        # Validation des champs obligatoires
+        if not name or not surname or not email:
+            return render_template('clients/new.html', error="Le nom, prénom et email sont obligatoires.")
+
+        # Validation de l'email format et unicité
+        if email and not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return render_template('clients/new.html', error="Adresse email invalide.")
+        existing = Client.query.filter_by(email=email).first()
+        if existing:
+            return render_template('clients/new.html', error="Un client avec cet email existe déjà.")
+
+        new_client = Client(name=name, surname=surname, email=email, phone=phone)
+        db.session.add(new_client)
+        db.session.commit()
+
+        return redirect(url_for('clients.index'))
+    #Si Méthode GET, afficher le formulaire vide
+    return render_template('clients/new.html')
 
 
 

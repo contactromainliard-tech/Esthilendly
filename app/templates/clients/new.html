@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<h1>Ajouter un client</h1>
+<form method="post" action="{{ url_for('clients.create_client') }}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nom</label>
+        <input type="text" class="form-control" id="name" name="name" maxlength="100" required>
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Prénom</label>
+        <input type="text" class="form-control" id="surname" name="surname" maxlength="100" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" maxlength="120" required>
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Téléphone</label>
+        <input type="tel" class="form-control" id="phone" name="phone" maxlength="20" pattern="[0-9]{10}">
+    </div>
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
+{% endblock %}
